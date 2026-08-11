@@ -17,9 +17,13 @@ const MESSAGES = [
 const LAYER_START = 0.2;
 const LAYER_STAGGER = 0.25;
 const LAYER_DURATION = 0.4;
+const LAYER_STAGGER_MOBILE = 0.15;
+const LAYER_DURATION_MOBILE = 0.3;
 const DOT_START = 1.7;
 const DOT_STAGGER = 0.055;
 const DOT_DURATION = 0.4;
+const DOT_STAGGER_MOBILE = 0.03;
+const DOT_DURATION_MOBILE = 0.3;
 const WOBBLE_AT = 2.7;
 const BAR_DURATION = 3.5;
 const LEAVE_AT = 3.5;
@@ -108,50 +112,50 @@ export function Preloader() {
       tl.call(() => updateMsg(3), [], 2.2);
       tl.call(() => updateMsg(4), [], 3.0);
 
-      if (!isMobile) {
-        // Desktop: full animation
-        tl.fromTo(
-          '.hb-pre-layer',
-          { opacity: 0, yPercent: 55, scale: 0.75 },
-          {
-            opacity: 1,
-            yPercent: 0,
-            scale: 1,
-            duration: LAYER_DURATION,
-            stagger: LAYER_STAGGER,
-            transformOrigin: '50% 100%',
-            ease: 'back.out(1.2)',
-          },
-          LAYER_START,
-        );
+      // Smooth layer stagger - same animation on mobile but faster
+      const layerStagger = isMobile ? LAYER_STAGGER_MOBILE : LAYER_STAGGER;
+      const layerDuration = isMobile ? LAYER_DURATION_MOBILE : LAYER_DURATION;
+      tl.fromTo(
+        '.hb-pre-layer',
+        { opacity: 0, yPercent: 55, scale: 0.75 },
+        {
+          opacity: 1,
+          yPercent: 0,
+          scale: 1,
+          duration: layerDuration,
+          stagger: layerStagger,
+          transformOrigin: '50% 100%',
+          ease: 'back.out(1.2)',
+        },
+        LAYER_START,
+      );
 
-        tl.fromTo(
-          '.hb-pre-dot',
-          { xPercent: -50, yPercent: -50, x: 0, y: 0, scale: 0, opacity: 0 },
-          {
-            xPercent: -50,
-            yPercent: -50,
-            x: (i) => DOTS[i].dx,
-            y: (i) => DOTS[i].dy,
-            scale: 1,
-            opacity: 1,
-            duration: DOT_DURATION,
-            stagger: DOT_STAGGER,
-            ease: 'back.out(2.2)',
-          },
-          DOT_START,
-        );
+      // Dots burst - same on mobile but faster
+      const dotStagger = isMobile ? DOT_STAGGER_MOBILE : DOT_STAGGER;
+      const dotDuration = isMobile ? DOT_DURATION_MOBILE : DOT_DURATION;
+      tl.fromTo(
+        '.hb-pre-dot',
+        { xPercent: -50, yPercent: -50, x: 0, y: 0, scale: 0, opacity: 0 },
+        {
+          xPercent: -50,
+          yPercent: -50,
+          x: (i) => DOTS[i].dx,
+          y: (i) => DOTS[i].dy,
+          scale: 1,
+          opacity: 1,
+          duration: dotDuration,
+          stagger: dotStagger,
+          ease: 'back.out(2.2)',
+        },
+        DOT_START,
+      );
 
-        const wobble = { ease: 'power1.inOut', transformOrigin: '50% 100%' };
-        tl.to('.hb-pre-burger', { rotate: -4, duration: 0.16, ...wobble }, WOBBLE_AT);
-        tl.to('.hb-pre-burger', { rotate: 3, duration: 0.18, ...wobble }, '+=0.02');
-        tl.to('.hb-pre-burger', { rotate: -1.5, duration: 0.14, ...wobble }, '+=0.02');
-        tl.to('.hb-pre-burger', { rotate: 0, duration: 0.16, ...wobble }, '+=0.02');
-      } else {
-        // Mobile: no animation - just show final state instantly, hide dots entirely
-        tl.set('.hb-pre-layer', { opacity: 1, yPercent: 0, scale: 1 }, 0);
-        tl.set('.hb-pre-dot', { display: 'none' }, 0);
-      }
+      // Playful wobble - same on mobile
+      const wobble = { ease: 'power1.inOut', transformOrigin: '50% 100%' };
+      tl.to('.hb-pre-burger', { rotate: -4, duration: 0.16, ...wobble }, WOBBLE_AT);
+      tl.to('.hb-pre-burger', { rotate: 3, duration: 0.18, ...wobble }, '+=0.02');
+      tl.to('.hb-pre-burger', { rotate: -1.5, duration: 0.14, ...wobble }, '+=0.02');
+      tl.to('.hb-pre-burger', { rotate: 0, duration: 0.16, ...wobble }, '+=0.02');
 
       // Progress bar fill - match LEAVE_AT exactly
       tl.fromTo(
