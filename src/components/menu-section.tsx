@@ -71,7 +71,7 @@ export function MenuSection({ category }: { category: MenuCategory }) {
         })}
       </div>
       <div className="hb-category-order">
-        <OrderButton label={`Order ${category.label}`} className="hb-button-sm hb-button-outline" />
+        <OrderButton label={`Order ${category.label}`} variant="hb-button-outline" className="hb-button-sm" />
       </div>
     </section>
   );

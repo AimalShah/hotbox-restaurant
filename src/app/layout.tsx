@@ -1,12 +1,35 @@
 import type { Metadata, Viewport } from 'next';
+import { Modak, Mouse_Memoirs, Rubik } from 'next/font/google';
 
 import { Footer } from '@/components/footer';
 import { Header } from '@/components/header';
+import { Preloader } from '@/components/preloader';
 import { Providers } from '@/components/providers';
 import { WHATSAPP_URL } from '@/data/hotbox';
-import { MessageCircle } from 'lucide-react';
+import { FaWhatsapp } from 'react-icons/fa';
 
 import './globals.css';
+
+const mouseMemoirs = Mouse_Memoirs({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--app-font-display',
+  display: 'swap',
+});
+
+const modak = Modak({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--app-font-sans',
+  display: 'swap',
+});
+
+const rubik = Rubik({
+  weight: ['400', '500', '600'],
+  subsets: ['latin'],
+  variable: '--app-font-text',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: 'HOTBOX Restaurant',
@@ -39,6 +62,7 @@ export const viewport: Viewport = {
 function Shell({ children }: { children: React.ReactNode }) {
   return (
     <div className="hb-shell">
+      <Preloader />
       <Header />
       <main>{children}</main>
       <Footer />
@@ -50,7 +74,8 @@ function Shell({ children }: { children: React.ReactNode }) {
         aria-label="Order on WhatsApp"
         data-testid="link-floating-whatsapp"
       >
-        <MessageCircle size={26} />
+        <FaWhatsapp size={20} />
+        <span>WhatsApp</span>
       </a>
     </div>
   );
@@ -62,16 +87,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
-        <link
-          href="https://fonts.googleapis.com/css2?family=Mouse+Memoirs&family=Modak&family=Rubik:wght@400;500;600&display=swap"
-          rel="stylesheet"
-        />
-      </head>
+    <html
+      lang="en"
+      className={`${mouseMemoirs.variable} ${modak.variable} ${rubik.variable}`}
+    >
       <body>
         <Providers>
           <Shell>{children}</Shell>

@@ -146,15 +146,9 @@ export default function ContactPage() {
           <p className="hb-section-intro mx-auto mb-5">
             Free delivery up to 2 km on orders above Rs. 1,000. Cash only.
           </p>
-          <div className="flex flex-wrap justify-center gap-2">
-            <OrderButton label="Start a WhatsApp order" className="hb-button-orange" />
-            <a
-              className="hb-button hb-button-outline text-[hsl(var(--primary-foreground))] border-[hsl(var(--primary-foreground)/.45)]"
-              href={`tel:${PHONE}`}
-              data-testid="link-contact-call"
-            >
-              <Phone size={16} /> Call now
-            </a>
+          <div className="flex flex-wrap justify-center w-full gap-2">
+            <OrderButton label="Start a WhatsApp order" variant="hb-button-orange" />
+         
           </div>
         </div>
       </section>

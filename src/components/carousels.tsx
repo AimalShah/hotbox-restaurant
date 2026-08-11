@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { ChevronRight } from 'lucide-react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination } from 'swiper/modules';
 import 'swiper/css';
@@ -10,18 +9,7 @@ import 'swiper/css/pagination';
 
 import { DealCard } from '@/components/deal-card';
 import { FoodImage, foodImages } from '@/components/food-image';
-import { menuCategories, type Deal } from '@/data/hotbox';
-
-const CAROUSEL_CATEGORY_IDS = [
-  'snacks',
-  'fried-chicken',
-  'regular-pizzas',
-  'burgers',
-  'shawarma-paratha',
-  'steaks',
-  'chinese-italian',
-  'fresh-drinks',
-];
+import type { Deal } from '@/data/hotbox';
 
 const POPULAR_IMAGES = [
   foodImages.pizza,
@@ -33,34 +21,6 @@ const POPULAR_IMAGES = [
 ] as const;
 
 export type PopularItem = [name: string, price: string, variants: string, category: string];
-
-export function CategoryCarousel() {
-  return (
-    <Swiper
-      className="hb-category-carousel"
-      spaceBetween={12}
-      slidesPerView={2.15}
-      breakpoints={{ 640: { slidesPerView: 4 }, 1024: { slidesPerView: 6 } }}
-      grabCursor
-    >
-      {menuCategories
-        .filter((category) => CAROUSEL_CATEGORY_IDS.includes(category.id))
-        .map((category, index) => (
-          <SwiperSlide key={category.id}>
-            <Link
-              href={`/menu#${category.id}`}
-              className="hb-category-card"
-              data-testid={`link-category-${category.id}`}
-            >
-              <div className="hb-category-number">0{index + 1}</div>
-              <h3>{category.label}</h3>
-              <ChevronRight size={17} className="mt-4 text-[color:hsl(var(--primary))]" />
-            </Link>
-          </SwiperSlide>
-        ))}
-    </Swiper>
-  );
-}
 
 export function PopularCarousel({ items }: { items: PopularItem[] }) {
   return (
@@ -80,7 +40,11 @@ export function PopularCarousel({ items }: { items: PopularItem[] }) {
             className="hb-popular-card"
             data-testid={`card-popular-${name.toLowerCase().replaceAll(' ', '-')}`}
             >
-            <FoodImage label={name} src={POPULAR_IMAGES[index % POPULAR_IMAGES.length]} />
+            <FoodImage
+              label={name}
+              src={POPULAR_IMAGES[index % POPULAR_IMAGES.length]}
+              sizes="112px"
+            />
             <div className="hb-popular-info">
               <h3>{name}</h3>
               {variants && <span className="hb-note">{variants}</span>}

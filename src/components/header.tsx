@@ -48,7 +48,8 @@ export function Header() {
             </a>
             <OrderButton
               label="WhatsApp"
-              className="hb-button-sm hb-button-primary hidden sm:inline-flex"
+              variant="hb-button-primary"
+              className="hb-button-sm hidden sm:inline-flex"
             />
           </div>
         </div>

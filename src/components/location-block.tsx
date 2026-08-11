@@ -32,7 +32,7 @@ export function LocationBlock() {
             <span data-testid="text-opening-hours">11 am – 1 am</span>
           </div>
           <div className="mt-5 flex flex-wrap gap-2">
-            <OrderButton label="Order now" className="hb-button-sm" />
+            <OrderButton label="Order now" variant="hb-button-primary" className="hb-button-sm" />
             <a className="hb-button hb-button-sm hb-button-outline" href={`tel:${PHONE}`} data-testid="link-location-call">
               <Phone size={16} /> Call now
             </a>

@@ -19,7 +19,7 @@ export function Footer() {
             </span>
           </Link>
           <p>A Family Restaurant in Charbagh, Swat. Dine in, take away, or have it delivered.</p>
-          <OrderButton label="Order on WhatsApp" className="hb-button-sm hb-button-orange" />
+          <OrderButton label="Order on WhatsApp" variant="hb-button-primary" className="hb-button-sm" />
         </div>
         <div>
           <h3>Explore</h3>

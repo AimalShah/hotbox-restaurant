@@ -19,7 +19,7 @@ export function FinalCTA() {
           WhatsApp HOTBOX to place your order. Call us when you would rather talk it through.
         </p>
         <div className="flex flex-wrap justify-center gap-2">
-          <OrderButton label="Order on WhatsApp" className="hb-button-orange" />
+          <OrderButton label="Order on WhatsApp" variant="hb-button-orange" />
           <a className="hb-button hb-button-outline" href={`tel:${PHONE}`} data-testid="link-final-call">
             <Phone size={16} /> 0342-6988268
           </a>

@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 export const foodImages = {
   burger: '/images/hotbox-burger.jpg',
   pizza: '/images/hotbox-pizza.jpg',
@@ -9,15 +11,25 @@ export function FoodImage({
   label,
   src,
   className = '',
+  sizes = '100vw',
+  priority = false,
 }: {
   label: string;
   src: string;
   className?: string;
+  sizes?: string;
+  priority?: boolean;
 }) {
   return (
     <div className={`hb-food-image ${className}`}>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={src} alt={label} loading="lazy" />
+      <Image
+        src={src}
+        alt={label}
+        fill
+        sizes={sizes}
+        priority={priority}
+        className="object-cover"
+      />
     </div>
   );
 }
