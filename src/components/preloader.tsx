@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import gsap from 'gsap';
 
 import { PRELOADER_LAYERS } from '@/data/preloader-layers';
 import { PRELOADER_DONE_EVENT } from '@/lib/reveal';
@@ -12,6 +13,18 @@ const MESSAGES = [
   'STACKING IT UP...',
   'ALMOST READY...',
 ];
+
+const LAYER_START = 0.2;
+const LAYER_STAGGER = 0.25;
+const LAYER_DURATION = 0.4;
+const DOT_START = 1.7;
+const DOT_STAGGER = 0.055;
+const DOT_DURATION = 0.4;
+const WOBBLE_AT = 2.7;
+const BAR_DURATION = 3.5;
+const LEAVE_AT = 3.5;
+const EXIT_DURATION = 0.55;
+const FALLBACK_AT = LEAVE_AT + EXIT_DURATION + 1.5;
 
 const DOTS = Array.from({ length: 12 }, (_, i) => {
   const angle = (i / 12) * Math.PI * 2;
@@ -27,43 +40,152 @@ const DOTS = Array.from({ length: 12 }, (_, i) => {
 });
 
 export function Preloader() {
-  const [phase, setPhase] = useState<'loading' | 'leaving' | 'done'>('loading');
-  const [message, setMessage] = useState(0);
-  const [barReady, setBarReady] = useState(false);
+  const [phase, setPhase] = useState<'loading' | 'done'>('loading');
+  const [progress, setProgress] = useState(0);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const msgRef = useRef<HTMLParagraphElement>(null);
+  const timelineRef = useRef<gsap.core.Timeline | null>(null);
+  const barFillRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      const done = window.setTimeout(() => {
-        document.body.style.overflow = '';
-        setPhase('done');
-        window.dispatchEvent(new Event(PRELOADER_DONE_EVENT));
-      }, 0);
-      return () => window.clearTimeout(done);
+    console.log('[Preloader] Mounted');
+
+    const isMobile = window.innerWidth < 640;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReducedMotion) {
+      console.log('[Preloader] Reduced motion active, bypassing');
+      document.body.style.overflow = '';
+      window.dispatchEvent(new Event(PRELOADER_DONE_EVENT));
+      // Defer state update to avoid synchronous setState in effect
+      setTimeout(() => setPhase('done'), 0);
+      return;
     }
 
     document.body.style.overflow = 'hidden';
-    const barFrame = requestAnimationFrame(() => setBarReady(true));
 
-    const messageTimer = window.setInterval(
-      () => setMessage((m) => (m + 1) % MESSAGES.length),
-      1000,
-    );
-    const leaveTimer = window.setTimeout(() => {
-      window.clearInterval(messageTimer);
-      setPhase('leaving');
+    const updateMsg = (idx: number) => {
+      if (msgRef.current) {
+        msgRef.current.textContent = MESSAGES[idx];
+      }
+    };
+
+    const dispatchDone = () => {
+      console.log('[Preloader] Dispatching done event');
       window.dispatchEvent(new Event(PRELOADER_DONE_EVENT));
-    }, 6000);
-    const doneTimer = window.setTimeout(() => {
+    };
+
+    const finish = () => {
+      console.log('[Preloader] Finish triggered');
       document.body.style.overflow = '';
+      dispatchDone();
       setPhase('done');
-    }, 6000 + 700);
+    };
+
+    gsap.context(() => {
+      const tl = gsap.timeline({
+        defaults: { ease: 'power3.out' },
+        onComplete: finish,
+        onUpdate: () => {
+          if (barFillRef.current) {
+            const pct = Math.round(tl.progress() * 100);
+            setProgress(pct);
+          }
+        },
+      });
+      timelineRef.current = tl;
+
+      // Frame-accurate synchronized text rotation
+      tl.call(() => updateMsg(0), [], 0);
+      tl.call(() => updateMsg(1), [], 0.6);
+      tl.call(() => updateMsg(2), [], 1.4);
+      tl.call(() => updateMsg(3), [], 2.2);
+      tl.call(() => updateMsg(4), [], 3.0);
+
+      // Smooth layer stagger - simplified on mobile
+      if (!isMobile) {
+        tl.fromTo(
+          '.hb-pre-layer',
+          { opacity: 0, yPercent: 55, scale: 0.75 },
+          {
+            opacity: 1,
+            yPercent: 0,
+            scale: 1,
+            duration: LAYER_DURATION,
+            stagger: LAYER_STAGGER,
+            transformOrigin: '50% 100%',
+            ease: 'back.out(1.2)',
+          },
+          LAYER_START,
+        );
+      } else {
+        // Mobile: instant layer reveal
+        tl.set('.hb-pre-layer', { opacity: 1, yPercent: 0, scale: 1 }, LAYER_START);
+      }
+
+      // Dots burst - simplified on mobile
+      if (!isMobile) {
+        tl.fromTo(
+          '.hb-pre-dot',
+          { xPercent: -50, yPercent: -50, x: 0, y: 0, scale: 0, opacity: 0 },
+          {
+            xPercent: -50,
+            yPercent: -50,
+            x: (i) => DOTS[i].dx,
+            y: (i) => DOTS[i].dy,
+            scale: 1,
+            opacity: 1,
+            duration: DOT_DURATION,
+            stagger: DOT_STAGGER,
+            ease: 'back.out(2.2)',
+          },
+          DOT_START,
+        );
+      } else {
+        // Mobile: instant dots
+        tl.set('.hb-pre-dot', { xPercent: -50, yPercent: -50, scale: 1, opacity: 1 }, DOT_START);
+      }
+
+      // Progress bar fill - match LEAVE_AT exactly
+      tl.fromTo(
+        barFillRef.current,
+        { width: '0%' },
+        { width: '100%', duration: BAR_DURATION, ease: 'power1.inOut' },
+        0,
+      );
+
+      // Playful wobble - skip on mobile
+      if (!isMobile) {
+        const wobble = { ease: 'power1.inOut', transformOrigin: '50% 100%' };
+        tl.to('.hb-pre-burger', { rotate: -4, duration: 0.16, ...wobble }, WOBBLE_AT);
+        tl.to('.hb-pre-burger', { rotate: 3, duration: 0.18, ...wobble }, '+=0.02');
+        tl.to('.hb-pre-burger', { rotate: -1.5, duration: 0.14, ...wobble }, '+=0.02');
+        tl.to('.hb-pre-burger', { rotate: 0, duration: 0.16, ...wobble }, '+=0.02');
+      }
+
+      // Exit slide up & fade out
+      tl.add(() => {
+        dispatchDone();
+        if (rootRef.current) {
+          rootRef.current.style.pointerEvents = 'none';
+        }
+      }, LEAVE_AT);
+
+      tl.to(
+        rootRef.current,
+        { yPercent: -100, opacity: 0, duration: EXIT_DURATION, ease: 'power3.inOut' },
+        LEAVE_AT,
+      );
+    }, rootRef);
+
+    const fallbackTimer = window.setTimeout(() => {
+      console.log('[Preloader] Safety fallback timer fired');
+      finish();
+    }, FALLBACK_AT * 1000);
 
     return () => {
-      cancelAnimationFrame(barFrame);
-      window.clearInterval(messageTimer);
-      window.clearTimeout(leaveTimer);
-      window.clearTimeout(doneTimer);
-      document.body.style.overflow = '';
+      console.log('[Preloader] Cleanup');
+      window.clearTimeout(fallbackTimer);
     };
   }, []);
 
@@ -71,7 +193,8 @@ export function Preloader() {
 
   return (
     <div
-      className={`hb-preloader${phase === 'leaving' ? ' hb-pre-exit' : ''}`}
+      ref={rootRef}
+      className="hb-preloader"
       role="dialog"
       aria-modal="true"
       aria-label="Page loading"
@@ -86,7 +209,6 @@ export function Preloader() {
               background: dot.color,
               width: dot.size,
               height: dot.size,
-              animationDelay: `${3.7 + i * 0.07}s`,
               ['--dx' as string]: `${dot.dx}px`,
               ['--dy' as string]: `${dot.dy}px`,
             }}
@@ -101,7 +223,6 @@ export function Preloader() {
               height: layer.height,
               width: layer.width,
               zIndex: layer.z,
-              animationDelay: `${0.15 + i * 0.8}s`,
             }}
           >
             <svg viewBox={layer.viewBox} preserveAspectRatio="none">
@@ -119,8 +240,8 @@ export function Preloader() {
           </div>
         ))}
       </div>
-      <p className="hb-pre-msg" aria-live="polite">
-        {MESSAGES[message]}
+      <p ref={msgRef} className="hb-pre-msg" aria-live="polite">
+        {MESSAGES[0]}
       </p>
       <div
         className="hb-pre-bar"
@@ -128,9 +249,9 @@ export function Preloader() {
         aria-label="Loading progress"
         aria-valuemin={0}
         aria-valuemax={100}
-        aria-valuenow={barReady ? 100 : 0}
+        aria-valuenow={progress}
       >
-        <div className="hb-pre-bar-fill" style={{ width: barReady ? '100%' : '0%' }} />
+        <div ref={barFillRef} className="hb-pre-bar-fill" />
       </div>
     </div>
   );

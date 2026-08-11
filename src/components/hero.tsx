@@ -29,7 +29,7 @@ export function Hero() {
   return (
     <section ref={sectionRef} className="hb-hero">
       <div className="hb-container hb-hero-inner">
-        <div>
+        <div className="hb-hero-text">
           <div className="hb-kicker" data-reveal="kicker" data-testid="text-hero-kicker">
             A family restaurant · Charbagh, Swat
           </div>
