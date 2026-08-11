@@ -108,8 +108,8 @@ export function Preloader() {
       tl.call(() => updateMsg(3), [], 2.2);
       tl.call(() => updateMsg(4), [], 3.0);
 
-      // Smooth layer stagger - simplified on mobile
       if (!isMobile) {
+        // Desktop: full animation
         tl.fromTo(
           '.hb-pre-layer',
           { opacity: 0, yPercent: 55, scale: 0.75 },
@@ -124,14 +124,7 @@ export function Preloader() {
           },
           LAYER_START,
         );
-      } else {
-        // Mobile: ensure layers start hidden, then instant reveal
-        tl.set('.hb-pre-layer', { opacity: 0, yPercent: 0, scale: 1 }, 0);
-        tl.set('.hb-pre-layer', { opacity: 1, yPercent: 0, scale: 1 }, LAYER_START);
-      }
 
-      // Dots burst - simplified on mobile
-      if (!isMobile) {
         tl.fromTo(
           '.hb-pre-dot',
           { xPercent: -50, yPercent: -50, x: 0, y: 0, scale: 0, opacity: 0 },
@@ -148,10 +141,16 @@ export function Preloader() {
           },
           DOT_START,
         );
+
+        const wobble = { ease: 'power1.inOut', transformOrigin: '50% 100%' };
+        tl.to('.hb-pre-burger', { rotate: -4, duration: 0.16, ...wobble }, WOBBLE_AT);
+        tl.to('.hb-pre-burger', { rotate: 3, duration: 0.18, ...wobble }, '+=0.02');
+        tl.to('.hb-pre-burger', { rotate: -1.5, duration: 0.14, ...wobble }, '+=0.02');
+        tl.to('.hb-pre-burger', { rotate: 0, duration: 0.16, ...wobble }, '+=0.02');
       } else {
-        // Mobile: ensure dots start hidden, then instant reveal
-        tl.set('.hb-pre-dot', { xPercent: -50, yPercent: -50, scale: 0, opacity: 0 }, 0);
-        tl.set('.hb-pre-dot', { xPercent: -50, yPercent: -50, scale: 1, opacity: 1 }, DOT_START);
+        // Mobile: no animation - just show final state instantly, hide dots entirely
+        tl.set('.hb-pre-layer', { opacity: 1, yPercent: 0, scale: 1 }, 0);
+        tl.set('.hb-pre-dot', { display: 'none' }, 0);
       }
 
       // Progress bar fill - match LEAVE_AT exactly
@@ -161,15 +160,6 @@ export function Preloader() {
         { width: '100%', duration: BAR_DURATION, ease: 'power1.inOut' },
         0,
       );
-
-      // Playful wobble - skip on mobile
-      if (!isMobile) {
-        const wobble = { ease: 'power1.inOut', transformOrigin: '50% 100%' };
-        tl.to('.hb-pre-burger', { rotate: -4, duration: 0.16, ...wobble }, WOBBLE_AT);
-        tl.to('.hb-pre-burger', { rotate: 3, duration: 0.18, ...wobble }, '+=0.02');
-        tl.to('.hb-pre-burger', { rotate: -1.5, duration: 0.14, ...wobble }, '+=0.02');
-        tl.to('.hb-pre-burger', { rotate: 0, duration: 0.16, ...wobble }, '+=0.02');
-      }
 
       // Exit slide up & fade out
       tl.add(() => {
