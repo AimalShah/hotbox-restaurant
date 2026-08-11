@@ -125,7 +125,8 @@ export function Preloader() {
           LAYER_START,
         );
       } else {
-        // Mobile: instant layer reveal
+        // Mobile: ensure layers start hidden, then instant reveal
+        tl.set('.hb-pre-layer', { opacity: 0, yPercent: 0, scale: 1 }, 0);
         tl.set('.hb-pre-layer', { opacity: 1, yPercent: 0, scale: 1 }, LAYER_START);
       }
 
@@ -148,7 +149,8 @@ export function Preloader() {
           DOT_START,
         );
       } else {
-        // Mobile: instant dots
+        // Mobile: ensure dots start hidden, then instant reveal
+        tl.set('.hb-pre-dot', { xPercent: -50, yPercent: -50, scale: 0, opacity: 0 }, 0);
         tl.set('.hb-pre-dot', { xPercent: -50, yPercent: -50, scale: 1, opacity: 1 }, DOT_START);
       }
 

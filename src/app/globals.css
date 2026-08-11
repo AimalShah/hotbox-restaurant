@@ -90,6 +90,9 @@
 @media (prefers-reduced-motion: reduce) {
   .hb-preloader { display: none; }
 }
+@media (max-width: 640px) {
+  .hb-pre-burger { width: min(60vw, 240px); aspect-ratio: 330 / 372; transform: translateY(-2vh); }
+}
 .hb-container { width: min(1180px, calc(100% - 2rem)); margin: 0 auto; }
 .hb-display { font-family: var(--app-font-display); text-transform: uppercase; letter-spacing: 0px; }
 .hb-topline { background: hsl(var(--foreground)); color: hsl(var(--secondary)); font-family: var(--app-font-display); font-size: .72rem; letter-spacing: .13em; text-transform: uppercase; }
