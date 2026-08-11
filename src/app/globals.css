@@ -352,7 +352,7 @@ a.hb-hero-chip:hover { transform: rotate(0deg) translateY(-2px); }
   .hb-menu-item-name { font-size: 1.2rem; }
   .hb-menu-toolbar { top: 64px; }
   .hb-menu-section { scroll-margin-top: 124px; }
-  .hb-menu-controls { align-items: stretch; }
+  .hb-menu-controls { align-items: stretch; flex-direction: column; gap: 1rem; }
   .hb-menu-search { width: 100%; }
   .hb-menu-search input { width: 100%; }
   .hb-deal-card h3 { font-size: 1.8rem; }
