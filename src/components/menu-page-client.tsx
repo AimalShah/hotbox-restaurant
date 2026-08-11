@@ -7,23 +7,34 @@ import { OrderButton } from '@/components/order-button';
 import { PageHero } from '@/components/page-hero';
 import { menuCategories } from '@/data/hotbox';
 
+type MenuGroup = { id: string; label: string; categoryIds: string[] };
+
+const menuGroups: MenuGroup[] = [
+  { id: 'pizza', label: 'Pizza', categoryIds: ['regular-pizzas', 'special-pizzas'] },
+  { id: 'burgers', label: 'Burgers', categoryIds: ['burgers'] },
+  { id: 'chicken', label: 'Chicken', categoryIds: ['fried-chicken', 'strips-dips-box'] },
+  { id: 'snacks', label: 'Snacks & Sides', categoryIds: ['snacks', 'soups', 'sauces', 'platters'] },
+  { id: 'sandwiches', label: 'Sandwiches & Wraps', categoryIds: ['sandwiches', 'wraps', 'shawarma-paratha'] },
+  { id: 'steaks', label: 'Steaks', categoryIds: ['steaks'] },
+  { id: 'chinese', label: 'Chinese / Italian', categoryIds: ['chinese-italian'] },
+  { id: 'drinks', label: 'Drinks & Desserts', categoryIds: ['chai-coffees', 'fresh-drinks', 'ice-cream', 'ice-cream-shakes'] },
+];
+
+const categoriesById = new Map(menuCategories.map((c) => [c.id, c]));
+
 export function MenuPageClient() {
-  const [active, setActive] = useState(menuCategories[0].id);
+  const [active, setActive] = useState(menuGroups[0].id);
 
   useEffect(() => {
     const hash = window.location.hash.replace('#', '');
-    if (hash && menuCategories.some((category) => category.id === hash)) {
-      window.setTimeout(() => {
-        setActive(hash);
-        document.getElementById(hash)?.scrollIntoView({ block: 'start' });
-      }, 80);
-    }
+    const group = menuGroups.find((g) => g.categoryIds.includes(hash));
+    if (group) setActive(group.id);
   }, []);
 
-  const jumpTo = (id: string) => {
-    setActive(id);
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
+  const group = menuGroups.find((g) => g.id === active) ?? menuGroups[0];
+  const categories = group.categoryIds
+    .map((id) => categoriesById.get(id))
+    .filter((c): c is NonNullable<typeof c> => Boolean(c));
 
   return (
     <>
@@ -33,22 +44,39 @@ export function MenuPageClient() {
         description="Pizza, fried chicken, burgers, shawarma, steaks, Chinese, Italian, drinks and the sides that make the order feel complete. Prices are listed exactly from the printed HOTBOX menu."
       />
       <div className="hb-menu-toolbar">
-        <div className="hb-container hb-menu-tabs">
-          {menuCategories.map((category) => (
-            <button
-              className={`hb-menu-tab ${active === category.id ? 'active' : ''}`}
-              type="button"
-              onClick={() => jumpTo(category.id)}
-              key={category.id}
-              data-testid={`button-menu-category-${category.id}`}
-            >
-              {category.label}
-            </button>
-          ))}
+        <div className="hb-container">
+          <div className="hb-menu-tabs" role="tablist">
+            {menuGroups.map((tab) => (
+              <button
+                className={`hb-menu-tab ${active === tab.id ? 'active' : ''}`}
+                type="button"
+                role="tab"
+                aria-selected={active === tab.id}
+                onClick={() => setActive(tab.id)}
+                key={tab.id}
+                data-testid={`button-menu-category-${tab.id}`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+          <select
+            className="hb-menu-select"
+            aria-label="Menu category"
+            value={active}
+            onChange={(e) => setActive(e.target.value)}
+            data-testid="select-menu-category"
+          >
+            {menuGroups.map((group) => (
+              <option key={group.id} value={group.id}>
+                {group.label}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
       <div className="hb-container">
-        {menuCategories.map((category) => (
+        {categories.map((category) => (
           <MenuSection category={category} key={category.id} />
         ))}
       </div>

@@ -18,7 +18,6 @@ import {
 import { FinalCTA } from '@/components/final-cta';
 import { FoodImage, foodImages } from '@/components/food-image';
 import { LocationBlock } from '@/components/location-block';
-import { OrderButton } from '@/components/order-button';
 import { deals } from '@/data/hotbox';
 
 const popular: PopularItem[] = [
@@ -49,13 +48,12 @@ export default function Home() {
               the food Charbagh makes time for.
             </p>
             <div className="hb-hero-actions">
-              <OrderButton />
               <Link
                 href="/menu"
                 className="hb-button hb-button-outline"
                 data-testid="link-hero-menu"
               >
-                See the full menu <ArrowRight size={16} />
+                See Full Menu
               </Link>
             </div>
           </div>
@@ -170,21 +168,22 @@ export default function Home() {
       <section className="hb-section">
         <div className="hb-container hb-review-layout">
           <div className="hb-rating-block">
-            <div className="hb-rating-number" data-testid="text-rating-number">
-              4.6
+            <div>
+              <span className="hb-rating-number" data-testid="text-rating-number">
+                4.6
+              </span>
+              <span className="hb-rating-meta">
+                <span className="flex items-center gap-1" aria-label="4.6 out of 5 stars">
+                  <Star size={14} fill="currentColor" />
+                  <Star size={14} fill="currentColor" />
+                  <Star size={14} fill="currentColor" />
+                  <Star size={14} fill="currentColor" />
+                  <Star size={14} fill="currentColor" />
+                </span>
+                <span className="block text-sm font-bold">/ 5 on Google</span>
+              </span>
             </div>
-            <div className="font-bold">/ 5 on Google</div>
-            <div
-              className="mt-2 flex items-center gap-1"
-              aria-label="4.6 out of 5 stars"
-            >
-              <Star size={16} fill="currentColor" />
-              <Star size={16} fill="currentColor" />
-              <Star size={16} fill="currentColor" />
-              <Star size={16} fill="currentColor" />
-              <Star size={16} fill="currentColor" />
-            </div>
-            <div className="mt-3 text-sm font-bold" data-testid="text-review-count">
+            <div className="mt-1 text-sm font-bold" data-testid="text-review-count">
               34 Google reviews
             </div>
           </div>

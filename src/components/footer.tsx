@@ -19,7 +19,7 @@ export function Footer() {
             </span>
           </Link>
           <p>A Family Restaurant in Charbagh, Swat. Dine in, take away, or have it delivered.</p>
-          <OrderButton label="Order on WhatsApp" className="hb-button-orange" />
+          <OrderButton label="Order on WhatsApp" className="hb-button-sm hb-button-orange" />
         </div>
         <div>
           <h3>Explore</h3>
@@ -81,7 +81,7 @@ export function Footer() {
       </div>
       <div className="hb-container hb-footer-bottom">
         <span>HOTBOX · Charbagh, Swat</span>
-        <span>{'{{OPENING_HOURS}}'} · needs confirmation</span>
+        <span>11 am – 1 am</span>
       </div>
     </footer>
   );

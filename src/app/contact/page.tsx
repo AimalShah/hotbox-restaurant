@@ -78,7 +78,7 @@ export default function ContactPage() {
                 <Clock3 size={17} className="inline mr-1" /> Opening hours
               </strong>
               <span data-testid="text-contact-opening-hours">
-                {'{{OPENING_HOURS}}'} · needs confirmation
+                11 am – 1 am
               </span>
             </div>
             <div className="hb-socials">
@@ -113,23 +113,25 @@ export default function ContactPage() {
           </div>
           <div
             className="hb-map"
-            aria-label="Map placeholder for HOTBOX contact location"
+            aria-label="Map showing HOTBOX at 1 Bahrain Rd, Charbagh, Swat"
             data-testid="map-contact-placeholder"
           >
-            <div>
-              <Navigation size={42} className="mx-auto mb-3 text-[color:hsl(var(--secondary))]" />
-              <strong className="hb-display text-3xl">1 Bahrain Road</strong>
-              <p className="mt-1 opacity-70">Main Bazar, Charbagh, Swat</p>
-              <a
-                className="hb-button hb-button-orange mt-5"
-                href="https://www.google.com/maps/search/?api=1&query=1+Bahrain+Rd+Main+Bazar+Charbagh+Swat"
-                target="_blank"
-                rel="noreferrer"
-                data-testid="link-open-map"
-              >
-                <Navigation size={16} /> Open map
-              </a>
-            </div>
+            <iframe
+              title="HOTBOX on Google Maps"
+              src="https://www.google.com/maps?q=1+Bahrain+Rd,+Main+Bazar,+Charbagh,+Swat,+Pakistan+19120&t=&z=15&ie=UTF8&iwloc=&output=embed"
+              loading="lazy"
+              allowFullScreen
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+            <a
+              className="hb-button hb-button-sm hb-map-open"
+              href="https://www.google.com/maps/search/?api=1&query=1+Bahrain+Rd+Main+Bazar+Charbagh+Swat"
+              target="_blank"
+              rel="noreferrer"
+              data-testid="link-open-map"
+            >
+              <Navigation size={16} /> Open map
+            </a>
           </div>
         </div>
       </section>

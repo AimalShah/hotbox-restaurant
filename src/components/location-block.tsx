@@ -1,7 +1,10 @@
-import { MapPin, Navigation, Phone, Truck, UtensilsCrossed } from 'lucide-react';
+import { MapPin, Phone, Truck, UtensilsCrossed } from 'lucide-react';
 
 import { OrderButton } from '@/components/order-button';
 import { PHONE } from '@/data/hotbox';
+
+const MAP_QUERY =
+  '1+Bahrain+Rd,+Main+Bazar,+Charbagh,+Swat,+Pakistan+19120';
 
 export function LocationBlock() {
   return (
@@ -26,27 +29,27 @@ export function LocationBlock() {
           </div>
           <div className="hb-hours">
             <strong>Opening hours</strong>
-            <span data-testid="text-opening-hours">{'{{OPENING_HOURS}}'} · needs confirmation</span>
+            <span data-testid="text-opening-hours">11 am – 1 am</span>
           </div>
           <div className="mt-5 flex flex-wrap gap-2">
-            <OrderButton label="Order now" />
-            <a className="hb-button hb-button-outline" href={`tel:${PHONE}`} data-testid="link-location-call">
+            <OrderButton label="Order now" className="hb-button-sm" />
+            <a className="hb-button hb-button-sm hb-button-outline" href={`tel:${PHONE}`} data-testid="link-location-call">
               <Phone size={16} /> Call now
             </a>
           </div>
         </div>
         <div
           className="hb-map"
-          aria-label="Map placeholder for HOTBOX location"
+          aria-label="Map showing HOTBOX at 1 Bahrain Rd, Charbagh, Swat"
           data-testid="map-location-placeholder"
         >
-          <div>
-            <Navigation size={34} className="mx-auto mb-2 text-[color:hsl(var(--secondary))]" />
-            <strong className="hb-display text-2xl">Map location</strong>
-            <p className="mt-1 text-sm opacity-70">
-              1 Bahrain Rd, Main Bazar, Charbagh, Swat
-            </p>
-          </div>
+          <iframe
+            title="HOTBOX on Google Maps"
+            src={`https://www.google.com/maps?q=${MAP_QUERY}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
+            loading="lazy"
+            allowFullScreen
+            referrerPolicy="no-referrer-when-downgrade"
+          />
         </div>
       </div>
     </section>

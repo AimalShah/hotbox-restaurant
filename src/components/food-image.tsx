@@ -17,8 +17,7 @@ export function FoodImage({
   return (
     <div className={`hb-food-image ${className}`}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={src} alt={`${label} — stock food photography`} loading="lazy" />
-      <span className="hb-image-credit">Stock photo</span>
+      <img src={src} alt={label} loading="lazy" />
     </div>
   );
 }

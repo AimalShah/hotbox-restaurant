@@ -24,7 +24,7 @@ export default function AboutPage() {
         <div className="hb-container hb-about-grid">
           <div className="hb-story-card">
             <div className="hb-eyebrow">HOTBOX · Charbagh, Swat</div>
-            <h2 className="hb-display mt-3 text-5xl sm:text-7xl">
+            <h2 className="hb-display mt-3 text-6xl sm:text-8xl">
               Local food.
               <br />
               Full table.
@@ -35,7 +35,7 @@ export default function AboutPage() {
               drinks. It is a family restaurant in the heart of Charbagh, with dine-in, take-away
               and delivery service.
             </p>
-            <OrderButton label="Talk to HOTBOX" className="hb-button-orange" />
+            <OrderButton label="Talk to HOTBOX" className="hb-button-sm hb-button-orange" />
           </div>
           <div>
             <div className="hb-eyebrow">What is verified</div>

@@ -16,7 +16,7 @@ export function OrderButton({
       target="_blank"
       rel="noreferrer"
     >
-      <MessageCircle size={17} /> {label}
+      <MessageCircle size={27} /> {label}
     </a>
   );
 }

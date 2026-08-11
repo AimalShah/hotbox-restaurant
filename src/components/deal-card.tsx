@@ -11,7 +11,7 @@ export function DealCard({ deal }: { deal: Deal }) {
       <h3>{deal.name}</h3>
       <p>{deal.contents}</p>
       <div className="hb-deal-price">Rs. {deal.price.toLocaleString()}</div>
-      <OrderButton label="Order this deal" className="hb-button-primary" />
+      <OrderButton label="Order this deal" className="hb-button-sm hb-button-primary" />
     </article>
   );
 }

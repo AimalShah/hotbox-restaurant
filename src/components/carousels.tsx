@@ -74,12 +74,12 @@ export function PopularCarousel({ items }: { items: PopularItem[] }) {
       grabCursor
     >
       {items.map(([name, price, variants, category], index) => (
-        <SwiperSlide key={name}>
+        <SwiperSlide key={name} className='mb-'>
           <Link
             href={`/menu#${category}`}
             className="hb-popular-card"
             data-testid={`card-popular-${name.toLowerCase().replaceAll(' ', '-')}`}
-          >
+            >
             <FoodImage label={name} src={POPULAR_IMAGES[index % POPULAR_IMAGES.length]} />
             <div className="hb-popular-info">
               <h3>{name}</h3>
@@ -106,7 +106,7 @@ export function DealCarousel({ items }: { items: Deal[] }) {
       modules={[Pagination]}
     >
       {items.map((item) => (
-        <SwiperSlide key={item.name}>
+        <SwiperSlide key={item.name} className="mb-9">
           <DealCard deal={item} />
         </SwiperSlide>
       ))}

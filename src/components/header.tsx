@@ -1,21 +1,20 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Flame, Menu as MenuIcon, Phone, X } from 'lucide-react';
+import { Flame, Phone } from 'lucide-react';
 
 import { navItems } from '@/components/nav-items';
 import { OrderButton } from '@/components/order-button';
 import { PHONE } from '@/data/hotbox';
 
 export function Header() {
-  const [open, setOpen] = useState(false);
   const location = usePathname();
+
   return (
     <>
       <div className="hb-topline">
-        <div className="hb-container flex min-h-8 items-center justify-between gap-3">
+        <div className="hb-container hb-topline-inner">
           <span data-testid="text-topline-service">Dine in · Take away · Delivery</span>
           <span data-testid="text-topline-payment">Cash only</span>
         </div>
@@ -47,39 +46,25 @@ export function Header() {
               <Phone size={14} className="inline mr-1" />
               0342-6988268
             </a>
-            <OrderButton label="WhatsApp" className="hb-button-orange hidden sm:inline-flex" />
-            <button
-              className="hb-menu-button"
-              type="button"
-              aria-label={open ? 'Close menu' : 'Open menu'}
-              onClick={() => setOpen(!open)}
-              data-testid="button-mobile-menu"
-            >
-              {open ? <X size={26} /> : <MenuIcon size={26} />}
-            </button>
+            <OrderButton
+              label="WhatsApp"
+              className="hb-button-sm hb-button-primary hidden sm:inline-flex"
+            />
           </div>
         </div>
-        {open && (
-          <div className="hb-mobile-panel md:hidden">
-            <div className="hb-container">
-              {navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setOpen(false)}
-                  data-testid={`link-mobile-${item.label.toLowerCase()}`}
-                >
-                  {item.label}
-                </Link>
-              ))}
-              <a href={`tel:${PHONE}`} data-testid="link-mobile-phone">
-                Call 0342-6988268
-              </a>
-              <OrderButton label="Order on WhatsApp" className="hb-button-primary w-full" />
-            </div>
-          </div>
-        )}
       </header>
+      <nav className="hb-mobile-nav" aria-label="Mobile navigation">
+        {navItems.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className={location === item.href ? 'active' : ''}
+            data-testid={`link-mobile-${item.label.toLowerCase()}`}
+          >
+            {item.label}
+          </Link>
+        ))}
+      </nav>
     </>
   );
 }
