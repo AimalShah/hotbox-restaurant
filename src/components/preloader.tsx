@@ -50,6 +50,8 @@ export function Preloader() {
   const rootRef = useRef<HTMLDivElement>(null);
   const msgRef = useRef<HTMLParagraphElement>(null);
   const timelineRef = useRef<gsap.core.Timeline | null>(null);
+  const ctxRef = useRef<gsap.Context | null>(null);
+  const animatedRef = useRef(false);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 640);
@@ -59,6 +61,9 @@ export function Preloader() {
   }, []);
 
   useEffect(() => {
+    if (animatedRef.current) return;
+    animatedRef.current = true;
+
     console.log('[Preloader] Mounted, isMobile:', isMobile);
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -69,7 +74,6 @@ export function Preloader() {
       console.log('[Preloader] Reduced motion active, bypassing');
       document.body.style.overflow = '';
       window.dispatchEvent(new Event(PRELOADER_DONE_EVENT));
-      // Defer state update to avoid synchronous setState in effect
       setTimeout(() => setPhase('done'), 0);
       return;
     }
@@ -94,7 +98,7 @@ export function Preloader() {
       setPhase('done');
     };
 
-    gsap.context(() => {
+    const ctx = gsap.context(() => {
       const tl = gsap.timeline({
         defaults: { ease: 'power3.out' },
         onComplete: finish,
@@ -150,7 +154,7 @@ export function Preloader() {
         DOT_START,
       );
 
-      // Playful wobble - same on mobile
+      // Playful wobble
       const wobble = { ease: 'power1.inOut', transformOrigin: '50% 100%' };
       tl.to('.hb-pre-burger', { rotate: -4, duration: 0.16, ...wobble }, WOBBLE_AT);
       tl.to('.hb-pre-burger', { rotate: 3, duration: 0.18, ...wobble }, '+=0.02');
@@ -180,6 +184,8 @@ export function Preloader() {
       );
     }, rootRef);
 
+    ctxRef.current = ctx;
+
     const fallbackTimer = window.setTimeout(() => {
       console.log('[Preloader] Safety fallback timer fired');
       finish();
@@ -188,6 +194,8 @@ export function Preloader() {
     return () => {
       console.log('[Preloader] Cleanup');
       window.clearTimeout(fallbackTimer);
+      ctx.revert();
+      animatedRef.current = false;
     };
   }, [isMobile]);
 
