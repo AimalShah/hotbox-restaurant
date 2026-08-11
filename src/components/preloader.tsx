@@ -42,16 +42,24 @@ const DOTS = Array.from({ length: 12 }, (_, i) => {
 export function Preloader() {
   const [phase, setPhase] = useState<'loading' | 'done'>('loading');
   const [progress, setProgress] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const msgRef = useRef<HTMLParagraphElement>(null);
   const timelineRef = useRef<gsap.core.Timeline | null>(null);
-  const barFillRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    console.log('[Preloader] Mounted');
+    const checkMobile = () => setIsMobile(window.innerWidth < 640);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
-    const isMobile = window.innerWidth < 640;
+  useEffect(() => {
+    console.log('[Preloader] Mounted, isMobile:', isMobile);
+
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    console.log('[Preloader] prefersReducedMotion:', prefersReducedMotion);
 
     if (prefersReducedMotion) {
       console.log('[Preloader] Reduced motion active, bypassing');
@@ -87,10 +95,8 @@ export function Preloader() {
         defaults: { ease: 'power3.out' },
         onComplete: finish,
         onUpdate: () => {
-          if (barFillRef.current) {
-            const pct = Math.round(tl.progress() * 100);
-            setProgress(pct);
-          }
+          const pct = Math.round(tl.progress() * 100);
+          setProgress(pct);
         },
       });
       timelineRef.current = tl;
@@ -148,7 +154,7 @@ export function Preloader() {
 
       // Progress bar fill - match LEAVE_AT exactly
       tl.fromTo(
-        barFillRef.current,
+        '.hb-pre-bar-fill',
         { width: '0%' },
         { width: '100%', duration: BAR_DURATION, ease: 'power1.inOut' },
         0,
@@ -187,7 +193,7 @@ export function Preloader() {
       console.log('[Preloader] Cleanup');
       window.clearTimeout(fallbackTimer);
     };
-  }, []);
+  }, [isMobile]);
 
   if (phase === 'done') return null;
 
@@ -251,7 +257,7 @@ export function Preloader() {
         aria-valuemax={100}
         aria-valuenow={progress}
       >
-        <div ref={barFillRef} className="hb-pre-bar-fill" />
+        <div className="hb-pre-bar-fill" />
       </div>
     </div>
   );
